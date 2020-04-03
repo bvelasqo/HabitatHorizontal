@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">HÁBITAT HORIZONTAL</string>
+    <string name="TitleRegister">Registrar</string>
+    <string name="anadir">Añadir</string>
+    <string name="Tel">Teléfono</string>
+    <string name="Ingresar">Ingresar</string>
+    <string name="Continuar">Continuar</string>
+    <string name="Tipo">Tipo de vivienda</string>
+    <string name="NuevaVivienda">Nueva vivienda</string>
+    <string name="Nombre">Nombre</string>
+    <string name="Id">Id</string>
+    <string name="password">Contraseña</string>
+    <string name="Viviendas">Viviendas</string>
+    <string name="RegistrarVivienda">Registrar Vivienda</string>
+    <string name="RegistrarDueño">Registrarse como dueño</string>
+    <string name="Admin">Datos de la app</string>
+    <string name="precio">Precio</string>
+    <string name="direccion">Dirección</string>
+    <string name="UnidadesRegistradas">Cantidad de unidades registradas</string>
+    <string name="UnidadesA">Cantidad de unidades arrendadas</string>
+    <string name="UnidadesD">Cantidad de unidades disponibles</string>
+    <string name="BestClient">Mejor cliente</string>
+    <string name="PromedioDeArriendos">Promedio actual de arriendos</string>
+    <string name="TipoComun">Tipo de vivienda más común</string>
+    <string name="btnDiaEspecifico">Ver arriendos en fecha específica</string>
+    <string name="EscogerFecha">Escoger fecha a arrendar</string>
+    <string name="fecha">Fecha</string>
+    <string name="Arrendar">Arrendar</string>
+</resources>

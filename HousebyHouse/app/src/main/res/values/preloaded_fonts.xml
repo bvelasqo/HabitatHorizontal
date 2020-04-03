@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/</item>
+        <item>@font/candal</item>
+        <item>@font/diplomata_sc</item>
+        <item>@font/graduate</item>
+        <item>@font/shrikhand</item>
+    </array>
+</resources>
