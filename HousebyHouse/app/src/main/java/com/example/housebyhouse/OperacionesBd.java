@@ -61,6 +61,7 @@ public class OperacionesBd {
     }
 
     public ArrayList<UnidadHabitacional> listaViviendas(){
+
         SQLiteDatabase db=helper.getWritableDatabase();
         String SQL="Select * from UnidadHabitacional";
         Cursor c=db.rawQuery(SQL,null);
@@ -123,13 +124,13 @@ public class OperacionesBd {
         return false;
     }
 
-    public long promedioArriendos(){
+    public double promedioArriendos(){
         SQLiteDatabase db=helper.getWritableDatabase();
-        String SQL="Select AVG(Precio) from UnidadHabitacional where EstaArrendada = 'si'";
+        String SQL="Select AVG(Precio) from UnidadHabitacional";
         Cursor c=db.rawQuery(SQL,null);
         if(c.getCount()==0)return 0;
         c.moveToFirst();
-        long avg=c.getInt(0);
+        double avg=c.getDouble(0);
         db.close();
         return  avg;
     }
@@ -252,7 +253,5 @@ public class OperacionesBd {
         db.close();
         return retorno;
     }
-
-
 
 }
