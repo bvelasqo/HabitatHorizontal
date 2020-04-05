@@ -80,17 +80,18 @@ public class activity_Datos extends AppCompatActivity {
         final View view = layoutInflater.inflate(R.layout.dialog_dia_especifico, null);
         builder.setView(view);
         final AlertDialog dialog = builder.create();
-        RecyclerView listView=view.findViewById(R.id.lv);
+        final RecyclerView listView=view.findViewById(R.id.lv);
         listView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         bd=new OperacionesBd(getApplicationContext());
-        ArrayList<UnidadHabitacional> arrayList = bd.BuscarViviendas(fechastring);
+        final ArrayList<UnidadHabitacional> arrayList = bd.BuscarViviendas(fechastring);
         if(arrayList.size()!=0) {
             dialog.show();
             adapterDatos = new AdapterDatos(arrayList);
             adapterDatos.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getApplicationContext(),"AAAAAAAAAAAAA",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Vivienda de "+arrayList.get(listView.getChildAdapterPosition(v))
+                                    .getNombrePropietario(), Toast.LENGTH_LONG).show();
                 }
             });
             listView.setAdapter(adapterDatos);

@@ -11,7 +11,7 @@
     <string name="Id">Id</string>
     <string name="password">Contraseña</string>
     <string name="Viviendas">Viviendas</string>
-    <string name="RegistrarVivienda">Registrar Vivienda</string>
+    <string name="RegistrarVivienda">Manejo de Vivienda</string>
     <string name="RegistrarDueño">Registrarse como dueño</string>
     <string name="Admin">Datos de la app</string>
     <string name="precio">Precio</string>
@@ -26,4 +26,8 @@
     <string name="EscogerFecha">Escoger fecha a arrendar</string>
     <string name="fecha">Fecha</string>
     <string name="Arrendar">Arrendar</string>
+    <string name="titleMenuManejo">Menu manejo de viviendas</string>
+    <string name="btnEliminarVivienda">Eliminar registro de vivienda</string>
+    <string name="btnDesarrendar">Quitar arrendamiento</string>
+    <string name="btnIngresarVivienda">Ingresar vivienda</string>
 </resources>

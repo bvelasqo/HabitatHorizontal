@@ -31,6 +31,47 @@ public class OperacionesBd {
         return viviendas;
     }
 
+    public ArrayList<UnidadHabitacional> MisViviendasArrendadas(String MiId) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String SQL = "Select * from UnidadHabitacional WHERE idPropietario=" + MiId+" AND EstaArrendada= 'si' ";
+        Cursor c = db.rawQuery(SQL, null);
+        ArrayList<UnidadHabitacional> list = new ArrayList<>();
+        if (c.moveToFirst()) {
+            do {
+                int id = c.getInt(0), idP = c.getInt(6), precio = c.getInt(2);
+                String tipo = c.getString(1), direccion = c.getString(3),
+                        EstaArrendada = c.getString(5), fechas = "", nombrePropietario = NombreP(idP),
+                        Telefono = Tel(idP);
+                if (c.getString(4) != null) fechas = c.getString(4);
+                list.add(new UnidadHabitacional(id, tipo, precio, direccion, fechas, EstaArrendada,
+                        nombrePropietario, Telefono));
+            } while (c.moveToNext());
+        }
+        db.close();
+        return list;
+    }
+
+    public ArrayList<UnidadHabitacional> MisViviendas(String MiId){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        String SQL = "Select * from UnidadHabitacional WHERE idPropietario="+MiId;
+        Cursor c=db.rawQuery(SQL,null);
+        ArrayList<UnidadHabitacional> list=new ArrayList<>();
+        if(c.moveToFirst()){
+            do{
+                int id=c.getInt(0),idP=c.getInt(6),precio=c.getInt(2);
+                String tipo=c.getString(1), direccion=c.getString(3),
+                        EstaArrendada=c.getString(5),fechas="",
+                        Telefono=Tel(idP);
+                if(c.getString(4)!=null)fechas=c.getString(4);
+                list.add(new UnidadHabitacional(id,tipo,precio,direccion,fechas,EstaArrendada,
+                        idP+"",Telefono));
+            }while(c.moveToNext());
+        }
+        db.close();
+        return list;
+    }
+
+
     public ArrayList<UnidadHabitacional> BuscarViviendas(String fecha) {
         SQLiteDatabase db = helper.getWritableDatabase();
         String SQL = "Select * from UnidadHabitacional WHERE FechaRecepcion = '" + fecha + "'";
@@ -56,6 +97,21 @@ public class OperacionesBd {
         ContentValues values = new ContentValues();
         values.put("EstaArrendada","si");
         values.put("FechaRecepcion",fecha);
+        db.update("UnidadHabitacional",values,"IdUnidad="+id,null);
+        db.close();
+    }
+
+    public void eliminarVivienda(int id,int idPropietario){
+        SQLiteDatabase db=helper.getWritableDatabase();
+        db.delete("UnidadHabitacional","IdUnidad="+id,null);
+        actualizarViviendas(idPropietario+"",-1);
+        db.close();
+    }
+
+    public void desarrendar(int id){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("EstaArrendada","no");
         db.update("UnidadHabitacional",values,"IdUnidad="+id,null);
         db.close();
     }
@@ -115,7 +171,7 @@ public class OperacionesBd {
                 cv.put("EstaArrendada","no");
                 cv.put("IdPropietario",idPropietario);
                 db.insert("UnidadHabitacional", null, cv);
-                actualizarViviendas(idPropietario);
+                actualizarViviendas(idPropietario,1);
                 db.close();
 
                 return true;
@@ -223,8 +279,8 @@ public class OperacionesBd {
         return false;
     }
 
-    private void actualizarViviendas(String id){
-            int v = viviendasPropietario(id) + 1;
+    private void actualizarViviendas(String id,int num){
+            int v = viviendasPropietario(id) + num;
             SQLiteDatabase db = helper.getWritableDatabase();
             ContentValues values = new ContentValues();
             values.put("Viviendas",v);

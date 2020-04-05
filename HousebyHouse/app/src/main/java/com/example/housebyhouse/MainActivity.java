@@ -2,10 +2,14 @@ package com.example.housebyhouse;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,13 +26,19 @@ public class MainActivity extends AppCompatActivity {
     OperacionesBd bd;
     String idActual;
     ArrayAdapter<String> adapter;
+    AdapterDatos adapterDatos;
+    RecyclerView recyclerView;
     ArrayList<String> list;
+    UnidadHabitacional unidadHabitacional;
+    ArrayList<UnidadHabitacional> listDatos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Conectar();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_OVERSCAN,WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+
 
         list=new ArrayList<>();
         list.add("Casa");
@@ -60,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     private void Conectar() {
         cvAddDueno=findViewById(R.id.cvAddDueno);
@@ -106,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
     private void DialogIngresoDueno() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater layoutInflater = getLayoutInflater();
@@ -124,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 if(!vacio()) {
                     if (bd.Ingresar(Id.getText().toString(), password.getText().toString())) {
                         idActual = Id.getText().toString();
-                        agregarViviendaDialog();
+                        MenuManejo();
                     } else
                         Toast.makeText(MainActivity.this, "Datos erróneos", Toast.LENGTH_LONG).show();
                     dialog.dismiss();
@@ -139,6 +152,143 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==event.KEYCODE_BACK){
+            final AlertDialog.Builder dialogoConfirmacion =new AlertDialog.Builder(MainActivity.this);
+            dialogoConfirmacion.setMessage("¿Seguro que desea salir de hábitat horizontal?")
+                    .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                           finish();
+                        }
+                    })
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            dialogoConfirmacion.show();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    public void MenuManejo(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater layoutInflater = getLayoutInflater();
+        final View view = layoutInflater.inflate(R.layout.dialog_menu_manejo, null);
+        builder.setView(view);
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+        Button btnViviendasDelete = view.findViewById(R.id.btnDeleteVivienda);
+        Button btnViviendasUpdate= view.findViewById(R.id.btnDesarrendar);
+        Button btnAddVivienda = view.findViewById(R.id.btnAddVivienda);
+        btnAddVivienda.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                agregarViviendaDialog();
+            }
+        });
+        btnViviendasDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EliminarVivienda();
+            }
+        });
+        btnViviendasUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ActualizarVivienda();
+            }
+        });
+    }
+
+    public void ActualizarVivienda(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater layoutInflater = getLayoutInflater();
+        final View view = layoutInflater.inflate(R.layout.dialog_desarrendar, null);
+        builder.setView(view);
+        final AlertDialog dialogA = builder.create();
+        dialogA.show();
+        final RecyclerView rvViviendasUpdate=view.findViewById(R.id.rvViviendasUpdate);
+        rvViviendasUpdate.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        listDatos=bd.MisViviendasArrendadas(idActual);
+        if(listDatos!=null) {
+            adapterDatos = new AdapterDatos(listDatos);
+            adapterDatos.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    //listDatos.get(rvViviendasDelete.getChildAdapterPosition(v));
+                    AlertDialog.Builder dialogoConfirmacion =new AlertDialog.Builder(MainActivity.this);
+                    dialogoConfirmacion.setMessage("¿Seguro que desea desarrendar esta vivienda?")
+                            .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    bd.desarrendar(listDatos.get(rvViviendasUpdate.getChildAdapterPosition(v)).getId());
+                                    Toast.makeText(MainActivity.this,"Vivienda desarrendada",Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                    dialogA.dismiss();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    dialogoConfirmacion.show();
+                }
+            });
+            rvViviendasUpdate.setAdapter(adapterDatos);
+        }
+        else
+            Toast.makeText(getApplicationContext(),"No hay viviendas registradas",Toast.LENGTH_LONG).show();
+    }
+
+    public void EliminarVivienda(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        LayoutInflater layoutInflater = getLayoutInflater();
+        final View view = layoutInflater.inflate(R.layout.dialog_delete_vivienda, null);
+        builder.setView(view);
+        final AlertDialog dialogE = builder.create();
+        dialogE.show();
+        final RecyclerView rvViviendasDelete=view.findViewById(R.id.rvViviendasDelete);
+        rvViviendasDelete.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        listDatos=bd.MisViviendas(idActual);
+        if(listDatos!=null) {
+            adapterDatos = new AdapterDatos(listDatos);
+            adapterDatos.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View v) {
+                    AlertDialog.Builder dialogoConfirmacion =new AlertDialog.Builder(MainActivity.this);
+                    dialogoConfirmacion.setMessage("¿Seguro que desea Eliminar esta vivienda?")
+                            .setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    bd.eliminarVivienda(listDatos.get(rvViviendasDelete.getChildAdapterPosition(v)).getId(),
+                                            Integer.parseInt(listDatos.get(rvViviendasDelete.getChildAdapterPosition(v)).getNombrePropietario()));
+                                    Toast.makeText(MainActivity.this,"Vivienda eliminada",Toast.LENGTH_LONG).show();
+                                    dialog.dismiss();
+                                    dialogE.dismiss();
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    dialogoConfirmacion.show();
+                }
+            });
+            rvViviendasDelete.setAdapter(adapterDatos);
+        }
+        else
+            Toast.makeText(getApplicationContext(),"No hay viviendas registradas",Toast.LENGTH_LONG).show();
+    }
+
     public void agregarViviendaDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater layoutInflater = getLayoutInflater();
